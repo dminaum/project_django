@@ -3,7 +3,7 @@
     "model": "catalog.product",
     "pk": 2,
     "fields": {
-        "name": "Наушники",
+        "name": "РќР°СѓС€РЅРёРєРё",
         "description": "",
         "image": "",
         "category": 2,
@@ -16,7 +16,7 @@
     "model": "catalog.product",
     "pk": 3,
     "fields": {
-        "name": "Луна в геншине",
+        "name": "Р›СѓРЅР° РІ РіРµРЅС€РёРЅРµ",
         "description": "",
         "image": "",
         "category": 3,
