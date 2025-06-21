@@ -1,0 +1,28 @@
+[
+{
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+        "name": "Наушники",
+        "description": "",
+        "image": "",
+        "category": 2,
+        "price": "12500.00",
+        "created_at": "2025-06-21T16:42:04.016Z",
+        "updated_at": "2025-06-21T16:42:04.016Z"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+        "name": "Луна в геншине",
+        "description": "",
+        "image": "",
+        "category": 3,
+        "price": "450.00",
+        "created_at": "2025-06-21T16:42:25.460Z",
+        "updated_at": "2025-06-21T16:47:18.685Z"
+    }
+}
+]
