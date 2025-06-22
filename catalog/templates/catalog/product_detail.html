@@ -1,0 +1,29 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ product.name }} - Skystore{% endblock %}
+
+{% block header %}
+<h1 class="display-4">{{ product.name }}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid mb-4 rounded">
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <p><strong>Категория:</strong> {{ product.category.name }}</p>
+
+        <p><strong>Описание:</strong><br>{{ product.description|linebreaks }}</p>
+
+        <p><strong>Цена:</strong> {{ product.price }} $</p>
+
+        <p><strong>Добавлен:</strong> {{ product.created_at|date:"d M Y" }}</p>
+        <p><strong>Обновлён:</strong> {{ product.updated_at|date:"d M Y H:i" }}</p>
+
+        <a href="/" class="btn btn-outline-secondary mt-3">← Назад к каталогу</a>
+    </div>
+</div>
+{% endblock %}
