@@ -1,0 +1,24 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ post.title }}</h2>
+<p><em>Опубликовано {{ post.created_at|date:"d M Y" }}</em></p>
+
+{% if post.preview %}
+    <img src="{{ post.preview.url }}" alt="Превью {{ post.title }}" style="max-width:300px;">
+{% endif %}
+
+<div>
+    {{ post.content|linebreaks }}
+</div>
+
+<p><strong>Просмотров: </strong>{{ post.views_count }}</p>
+
+<p>
+    <a href="{% url 'post-update' post.pk %}">Редактировать</a> |
+    <a href="{% url 'post-delete' post.pk %}">Удалить</a> |
+    <a href="{% url 'main-feed' %}">К списку постов</a>
+</p>
+{% endblock %}

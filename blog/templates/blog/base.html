@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Блог{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Мой блог</h1>
+        <nav>
+            <a href="{% url 'main-feed' %}">Главная</a> |
+            <a href="{% url 'post-create' %}">Новый пост</a>
+        </nav>
+        <hr />
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <hr />
+        <p>© 2025 Мой блог</p>
+    </footer>
+</body>
+</html>
