@@ -15,15 +15,16 @@
     </div>
     <div class="col-md-6">
         <p><strong>Категория:</strong> {{ product.category.name }}</p>
-
         <p><strong>Описание:</strong><br>{{ product.description|linebreaks }}</p>
-
         <p><strong>Цена:</strong> {{ product.price }} $</p>
-
         <p><strong>Добавлен:</strong> {{ product.created_at|date:"d M Y" }}</p>
         <p><strong>Обновлён:</strong> {{ product.updated_at|date:"d M Y H:i" }}</p>
 
-        <a href="/" class="btn btn-outline-secondary mt-3">← Назад к каталогу</a>
+        <div class="mt-4 d-flex flex-wrap gap-2">
+            <a href="/" class="btn btn-outline-secondary">← Назад к каталогу</a>
+            <a href="{% url 'product_update' product.pk %}" class="btn btn-warning">Редактировать</a>
+            <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
+        </div>
     </div>
 </div>
 {% endblock %}

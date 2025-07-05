@@ -3,6 +3,11 @@
 {% block title %}Главная - Skystore{% endblock %}
 
 {% block content %}
+
+<div class="mb-4 text-end">
+    <a href="{% url 'product_create' %}" class="btn btn-success">+ Добавить продукт</a>
+</div>
+
 <div class="row text-center">
     {% for product in products %}
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
@@ -15,12 +20,20 @@
                     <ul class="list-unstyled mt-3 mb-4 text-start m-3">
                         <li>{{ product.description|truncatechars:100 }}</li>
                     </ul>
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-lg btn-block btn-outline-primary">
-                        Купить
+
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-primary mb-2">
+                        Подробнее
                     </a>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'product_update' product.id %}" class="btn btn-sm btn-warning w-100 me-1">Редактировать</a>
+                        <a href="{% url 'product_delete' product.id %}" class="btn btn-sm btn-danger w-100 ms-1">Удалить</a>
+                    </div>
                 </div>
             </div>
         </div>
     {% endfor %}
 </div>
+
 {% endblock %}
+
