@@ -2,9 +2,11 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from .models import Product
 from django.urls import reverse_lazy, reverse
 from .forms import ProductForm
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
+
 
 
 class HomeView(ListView):
@@ -29,6 +31,7 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'product'
 
     login_url = reverse_lazy('login')
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -74,6 +77,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+
     model = Product
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('home')
@@ -96,3 +100,4 @@ class UnpublishProductView(LoginRequiredMixin, PermissionRequiredMixin, View):
         product.is_published = False
         product.save()
         return redirect('product_detail', pk=pk)
+
