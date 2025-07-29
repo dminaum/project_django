@@ -2,13 +2,21 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from .models import Product
 from django.urls import reverse_lazy, reverse
 from .forms import ProductForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.shortcuts import redirect, get_object_or_404
+from django.views import View
 
 
 class HomeView(ListView):
     model = Product
     template_name = 'catalog/home.html'
     context_object_name = 'products'
+
+    def get_queryset(self):
+        qs = Product.objects.all()
+        if self.request.user.has_perm('catalog.can_unpublish_product'):
+            return qs
+        return qs.filter(is_published=True)
 
 
 class ContactsView(TemplateView):
@@ -22,6 +30,14 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
 
     login_url = reverse_lazy('login')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['can_delete'] = user.has_perm('catalog.can_delete_product')
+        context['can_unpublish'] = user.has_perm('catalog.can_unpublish_product')
+        return context
+
+
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
@@ -33,6 +49,10 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('product_detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
@@ -46,11 +66,33 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse('product_detail', kwargs={'pk': self.object.pk})
 
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.owner != request.user:
+            return redirect('home')  # или выкинуть 403
+        return super().dispatch(request, *args, **kwargs)
 
-class ProductDeleteView(LoginRequiredMixin, DeleteView):
+
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('home')
     context_object_name = 'product'
 
     login_url = reverse_lazy('login')
+    permission_required = 'catalog.can_delete_product'
+    raise_exception = True
+
+    def has_permission(self):
+        obj = self.get_object()
+        return self.request.user == obj.owner or self.request.user.has_perm(self.permission_required)
+
+
+class UnpublishProductView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'catalog.can_unpublish_product'
+
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        product.is_published = False
+        product.save()
+        return redirect('product_detail', pk=pk)

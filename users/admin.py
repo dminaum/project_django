@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
+
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -17,8 +18,9 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'phone', 'country', 'avatar', 'password1', 'password2', 'is_staff', 'is_active')}
-        ),
+            'fields': (
+            'email', 'username', 'phone', 'country', 'avatar', 'password1', 'password2', 'is_staff', 'is_active')}
+         ),
     )
 
     search_fields = ('email', 'username')
