@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product
+from .models import Product, Category
 from django.core.exceptions import ValidationError
 
 banned_words = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно', 'обман', 'полиция', 'радар']

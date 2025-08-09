@@ -1,10 +1,15 @@
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Product
+from .models import Product, Category
 from django.urls import reverse_lazy, reverse
 from .forms import ProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+
+from .services import ProductService
 
 
 class HomeView(ListView):
@@ -23,6 +28,7 @@ class ContactsView(TemplateView):
     template_name = 'catalog/contacts.html'
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
@@ -36,7 +42,6 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
         context['can_delete'] = user.has_perm('catalog.can_delete_product')
         context['can_unpublish'] = user.has_perm('catalog.can_unpublish_product')
         return context
-
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -96,3 +101,27 @@ class UnpublishProductView(LoginRequiredMixin, PermissionRequiredMixin, View):
         product.is_published = False
         product.save()
         return redirect('product_detail', pk=pk)
+
+
+class ProductsByCategoryView(LoginRequiredMixin, ListView):
+    model = Product
+    template_name = 'catalog/category_products.html'
+    context_object_name = 'products'
+    login_url = reverse_lazy('login')
+
+    def get_queryset(self):
+        queryset = cache.get('my_queryset')
+        if not queryset:
+            queryset = ProductService.products_in_category(self.kwargs['pk'])
+            cache.set('my_queryset', queryset, 60 * 15)
+        return queryset
+
+
+class ChooseCategoryView(LoginRequiredMixin, TemplateView):
+    template_name = 'catalog/choose_category.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['categories'] = Category.objects.order_by('name').values('id', 'name')
+        return ctx
+

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Выберите категорию</h1>
+
+<div class="row g-3 align-items-center">
+  <div class="col-md-6">
+    <input id="catSearch" type="search" class="form-control" placeholder="Поиск категории...">
+  </div>
+  <div class="col-md-6 d-flex gap-2">
+    <select id="catSelect" class="form-select">
+      <option value="">— выберите категорию —</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+    <button id="goBtn" class="btn btn-primary" disabled>Показать</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const input = document.getElementById('catSearch');
+    const select = document.getElementById('catSelect');
+    const btn = document.getElementById('goBtn');
+
+    // Фильтр опций по вводу (клиентский)
+    input.addEventListener('input', () => {
+      const q = input.value.toLowerCase().trim();
+      for (const opt of select.options) {
+        if (!opt.value) { opt.hidden = false; continue; } // плейсхолдер
+        opt.hidden = q && !opt.text.toLowerCase().includes(q);
+      }
+      // если текущая выбранная опция скрыта — сбрасываем выбор
+      if (select.selectedOptions.length && select.selectedOptions[0].hidden) {
+        select.value = '';
+        btn.disabled = true;
+      }
+    });
+
+    // Кнопка активна только при выборе
+    select.addEventListener('change', () => {
+      btn.disabled = !select.value;
+    });
+
+    // Переход на страницу категории
+    const go = () => {
+      if (!select.value) return;
+      const url = "{% url 'category_products' pk=0 %}".replace('0', select.value);
+      window.location.href = url;
+    };
+    btn.addEventListener('click', go);
+    // и двойной клик/Enter по select — тоже переход
+    select.addEventListener('dblclick', go);
+    select.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') go();
+    });
+  })();
+</script>
+{% endblock %}

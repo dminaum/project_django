@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Категория: {{ category.name }}</h1>
+  {% if category.description %}
+    <p>{{ category.description }}</p>
+  {% endif %}
+
+  {% if products %}
+    <ul>
+      {% for p in products %}
+        <li>
+          <a href="{% url 'product_detail' pk=p.pk %}">{{ p.name }}</a>
+          — {{ p.price }} €
+          {% if not p.is_published %}<em>(не опубликован)</em>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if is_paginated %}
+      <nav class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+        {% endif %}
+        <span>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Вперёд</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <p>В этой категории пока нет товаров.</p>
+  {% endif %}
+{% endblock %}
