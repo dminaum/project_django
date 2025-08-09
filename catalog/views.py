@@ -1,15 +1,10 @@
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Product, Category
+from .models import Product
 from django.urls import reverse_lazy, reverse
 from .forms import ProductForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from django.core.cache import cache
-
-from .services import ProductService
 
 
 class HomeView(ListView):
@@ -42,6 +37,7 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
         context['can_delete'] = user.has_perm('catalog.can_delete_product')
         context['can_unpublish'] = user.has_perm('catalog.can_unpublish_product')
         return context
+
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
